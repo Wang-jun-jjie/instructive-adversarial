@@ -110,38 +110,18 @@ def main():
     # )
     # logger.info(args)
 
-    def show_trans(grid_hist, grad_hist):
-        if len(grid_hist) < 1:
-            print('Iteration smaller than 1, cannot show the grid transistion')
-            return
-        print('==> Show the grid transistion')
-        value_range = (2.0/args.image_size)*args.epsilon
-        fig, axs = plt.subplots(4, len(grid_hist), figsize=(6*len(grid_hist)+1, 24))
-        for i, grid in enumerate(grid_hist):
-            axs[0, i].imshow(grid[0,0,:,:], cmap='rainbow', vmin=-value_range, vmax=value_range)
-            axs[1, i].imshow(grid[0,1,:,:], cmap='rainbow', vmin=-value_range, vmax=value_range)
-        plt.savefig('./picture/imagetest.png')
-        plt.close()
-
-        print('==> Show the gradient magnitude')
-        plt.plot(range(len(grad_hist)), grad_hist, label='gradient magnitude')
-        plt.savefig('./picture/gdtest.png')
-        plt.close()
-
-    def show_adv():
-        pass
-
     def attack(record=False):
         correct_normal, correct_adv, total = 0, 0, 0
-        # grid_hist = []
-        # grad_hist = []
+
         for batch_idx, (data, target) in enumerate(test_loader):
             data, target = data.to(device), target.to(device)
-            adv = baseline_1_1(model, instructor, optimizer2, data, target, \
-                args.epsilon, args.step_size, args.iteration)
-            # save the grid histogram
-            record = False
-            # show_trans(grid_hist, grad_hist)
+            if batch_idx == 1:
+                adv = baseline_1_1(model, instructor, optimizer2, data, target, \
+                    args.epsilon, args.step_size, args.iteration, record=True)
+            else:
+                adv = baseline_1_1(model, instructor, optimizer2, data, target, \
+                    args.epsilon, args.step_size, args.iteration)
+
             '''
             Evaluate attack performance
             '''
