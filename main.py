@@ -48,7 +48,7 @@ import numpy as np
 
 from lib.utils import get_loaders, input_normalize
 from lib.instructor import Instructor
-from lib.attack import baseline_1_1
+from lib.attack import *
 
 def main():
     print('pytorch version: ' + torch.__version__)
@@ -62,7 +62,8 @@ def main():
                                             image_size=args.image_size,)
 
     # Load model and optimizer
-    model = models.resnet50(pretrained=False, num_classes=10).to(device)
+    # model = models.resnet50(pretrained=False, num_classes=10).to(device)
+    model = models.resnet50(pretrained=True).to(device)
     # Add weight decay into the model
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr_max,
                                 # momentum=args.momentum,
@@ -94,6 +95,8 @@ def main():
     
     instructor = Instructor(args).to(device)
     criterion = nn.CrossEntropyLoss().to(device)
+    model.eval()
+    instructor.eval()
 
     # Logger
     # log_dir = Path('./logs/')
@@ -115,12 +118,40 @@ def main():
 
         for batch_idx, (data, target) in enumerate(test_loader):
             data, target = data.to(device), target.to(device)
+            # if batch_idx == 1:
+            #     adv = baseline_1_1(model, instructor, optimizer2, data, target, \
+            #         args.epsilon, args.step_size, args.iteration, record=True)
+            # else:
+            #     adv = baseline_1_1(model, instructor, optimizer2, data, target, \
+            #         args.epsilon, args.step_size, args.iteration)
+
             if batch_idx == 1:
-                adv = baseline_1_1(model, instructor, optimizer2, data, target, \
-                    args.epsilon, args.step_size, args.iteration, record=True)
+                adv = baseline_2_1(model, instructor, optimizer2, data, target, \
+                    args.epsilon, args.kernel_size, args.step_size, args.iteration, record=True)
             else:
-                adv = baseline_1_1(model, instructor, optimizer2, data, target, \
-                    args.epsilon, args.step_size, args.iteration)
+                adv = baseline_2_1(model, instructor, optimizer2, data, target, \
+                    args.epsilon, args.kernel_size, args.step_size, args.iteration)
+
+            # if batch_idx == 1:
+            #     adv = baseline_2_3(model, instructor, optimizer2, data, target, \
+            #         args.epsilon, args.kernel_size, args.step_size, args.iteration, record=True)
+            # else:
+            #     adv = baseline_2_3(model, instructor, optimizer2, data, target, \
+            #         args.epsilon, args.kernel_size, args.step_size, args.iteration)
+
+            # if batch_idx == 1:
+            #     adv = baseline_4_3(model, instructor, optimizer2, data, target, \
+            #         args.epsilon, args.kernel_size, args.step_size, args.iteration, record=True)
+            # else:
+            #     adv = baseline_4_3(model, instructor, optimizer2, data, target, \
+            #         args.epsilon, args.kernel_size, args.step_size, args.iteration)
+
+            # if batch_idx == 1:
+            #     adv = baseline_5(model, instructor, optimizer2, data, target, \
+            #         args.epsilon, args.kernel_size, args.step_size, args.iteration, record=True)
+            # else:
+            #     adv = baseline_5(model, instructor, optimizer2, data, target, \
+            #         args.epsilon, args.kernel_size, args.step_size, args.iteration)
 
             '''
             Evaluate attack performance
@@ -138,16 +169,16 @@ def main():
 
                 total += target.size(0)
             
-            if batch_idx == 10:
-                print('==> early break in testing')
-                break
+            # if batch_idx == 10:
+            #     print('==> early break in testing')
+            #     break
 
         return  (correct_normal / total), (correct_adv / total)
     
     # Run
     accuracy_normal, accuracy_adv = attack(record=True)
-    print('Model original accuracy: {:.4f}'.format(accuracy_normal))
-    print('Model adversarial accuracy: {:.4f}'.format(accuracy_adv))
+    print('Model original accuracy: {:.6f}'.format(accuracy_normal))
+    print('Model adversarial accuracy: {:.6f}'.format(accuracy_adv))
 
 if __name__ == "__main__":
     main()

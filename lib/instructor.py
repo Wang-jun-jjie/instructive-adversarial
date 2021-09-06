@@ -132,6 +132,3 @@ class Instructor(nn.Module):
         samp_grid = self.forward_grid(prim_grid, rho, eta)
         distort_image = self.image_binding(image, samp_grid)
         return distort_image
-    
-    # baseline forwarding
-    
