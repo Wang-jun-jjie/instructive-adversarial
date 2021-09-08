@@ -25,8 +25,10 @@ parser.add_argument('--epsilon',            default=1,              type=float, 
 parser.add_argument('--kernel-size', '-k',  default=13,             type=int,    help='kernel size for adversarial attacks, must be odd integer')
 
 parser.add_argument('--image-size', '--is', default=224,            type=int,    help='image size (default: 224 for ImageNet)')
-parser.add_argument('--dataset-root', '--ds', default='/tmp2/dataset/Restricted_ImageNet_Hendrycks', \
-    type=str, help='input dataset, default: Restricted Imagenet Hendrycks A')
+# parser.add_argument('--dataset-root', '--ds', default='/tmp2/dataset/Restricted_ImageNet_Hendrycks', \
+#     type=str, help='input dataset, default: Restricted Imagenet Hendrycks A')
+parser.add_argument('--dataset-root', '--ds', default='/tmp2/dataset/imagenet/ILSVRC/Data/CLS-LOC', \
+    type=str, help='input dataset, default: Imagenet-1k')
 parser.add_argument('--ckpt-root', '--ckpt', default='/tmp2/aislab/adv_ckpt', \
     type=str, help='root directory of checkpoints')
 parser.add_argument('--opt-level', '-o',    default='O0',           type=str,    help='Nvidia apex optimation level (default: O1)')
