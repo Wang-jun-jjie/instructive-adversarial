@@ -2,4 +2,4 @@
 
 Adversarial attack on spatial domain with instructor
 
-The future of the instructor is not promising, implement it become a very low periority
+The future of the instructor is not promising, implement it become a very low priority
